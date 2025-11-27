@@ -1,0 +1,15 @@
+@import "tailwindcss";
+
+@theme {
+  --color-lavender-gray-50: #f3f4fa;
+  --color-lavender-gray-100: #e8ebf7;
+  --color-lavender-gray-200: #d6daef;
+  --color-lavender-gray-300: #b5bae1;
+  --color-lavender-gray-400: #a2a4d7;
+  --color-lavender-gray-500: #8d8aca;
+  --color-lavender-gray-600: #7a72b9;
+  --color-lavender-gray-700: #6960a2;
+  --color-lavender-gray-800: #564f84;
+  --color-lavender-gray-900: #48456a;
+  --color-lavender-gray-950: #2b283e;
+}
