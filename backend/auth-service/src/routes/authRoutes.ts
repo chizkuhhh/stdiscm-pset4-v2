@@ -107,9 +107,8 @@ router.post('/login', async (req, res) => {
   if (!valid)
     return res.status(400).json({ message: "Invalid password" });
 
-  // JWT includes role now!
   const token = jwt.sign(
-    { email: user.email, role: user.role },
+    { id: user.id, email: user.email, role: user.role },
     process.env.JWT_SECRET || "dev-secret-key",
     { expiresIn: "1h" }
   );
