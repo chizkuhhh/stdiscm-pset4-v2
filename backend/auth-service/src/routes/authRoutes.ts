@@ -60,8 +60,6 @@ router.post('/signup/complete', async (req, res) => {
   if (!email || !password)
     return res.status(400).json({ message: "Email and password required" });
 
-  const normalizedRole = role === "faculty" ? "faculty" : "student";
-
   const existing = await prisma.users.findUnique({ where: {email} })
   if (existing)
       return res.status(400).json({ message: "Email already registered" })
@@ -72,7 +70,7 @@ router.post('/signup/complete', async (req, res) => {
     data: {
       email,
       passwordHash: hash,
-      role: normalizedRole
+      role
     }
   })
 
