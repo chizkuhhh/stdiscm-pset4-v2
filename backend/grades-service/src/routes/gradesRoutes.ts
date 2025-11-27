@@ -23,7 +23,7 @@ router.post("/", jwtMiddleware, async (req: AuthRequest, res) => {
   const { studentEmail, courseCode, grade, term } = req.body;
 
   const student = await prisma.users.findUnique({ where: { email: studentEmail } });
-  const course = await prisma.courses.findUnique({ where: { code: courseCode } });
+  const course = await prisma.courses.findFirst({ where: { code: courseCode } });
 
   const record = await prisma.grades.create({
     data: {
