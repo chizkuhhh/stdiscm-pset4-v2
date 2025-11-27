@@ -12,11 +12,13 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@prisma/client": "^5.20.0",
     "bcrypt": "^6.0.0",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
+    "prisma": "^5.20.0",
     "redis": "^5.10.0"
   },
   "devDependencies": {

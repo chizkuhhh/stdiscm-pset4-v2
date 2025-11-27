@@ -1,13 +1,12 @@
 import express from 'express';
-import { createUser, getUser, validatePassword } from '../userStore';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
+import { prisma } from '../prisma';
 
 const router = express.Router();
 
 /*
   STEP 1 — email → generate verification code (in-memory)
-  You already removed Redis so we'll store codes locally.
 */
 
 const verificationCodes = new Map<string, string>();
@@ -63,15 +62,27 @@ router.post('/signup/complete', async (req, res) => {
 
   const normalizedRole = role === "faculty" ? "faculty" : "student";
 
-  const newUser = await createUser(email, password, normalizedRole);
+  const existing = await prisma.users.findUnique({ where: {email} })
+  if (existing)
+      return res.status(400).json({ message: "Email already registered" })
+  
+  const hash = await bcrypt.hash(password, 10)
+
+  const newUser = await prisma.users.create({
+    data: {
+      email,
+      passwordHash: hash,
+      role: normalizedRole
+    }
+  })
 
   return res.json({
-    message: "Account created successfully!",
+    message: "Account created!",
     user: {
       email: newUser.email,
-      role: newUser.role
-    }
-  });
+      role: newUser.role,
+    },
+  })
 });
 
 
@@ -84,12 +95,14 @@ router.post('/login', async (req, res) => {
   if (!email || !password)
     return res.status(400).json({ message: "Email and password required" });
 
-  const user = getUser(email);
+  const user = await prisma.users.findUnique({
+    where: { email },
+  })
 
   if (!user)
     return res.status(400).json({ message: "User not found" });
 
-  const valid = await validatePassword(email, password);
+  const valid = await bcrypt.compare(password, user.passwordHash)
 
   if (!valid)
     return res.status(400).json({ message: "Invalid password" });
