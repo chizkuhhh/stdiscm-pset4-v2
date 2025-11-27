@@ -20,8 +20,8 @@ export default function Courses() {
   }, []);
 
   return (
-    <div className="p-6">
-      <h1 className="text-xl font-bold mb-4">Available Courses</h1>
+    <div>
+      <h1 className="text-2xl font-bold mb-4">Available Courses</h1>
 
       <div className="space-y-4">
         {courses.map((c) => (

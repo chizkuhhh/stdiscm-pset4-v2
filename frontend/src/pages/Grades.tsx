@@ -3,9 +3,11 @@ import { gradesApi } from "../api/gradesApi";
 
 interface GradeRecord {
   courseId: string;
+  courseCode: string;
   courseTitle: string;
   faculty: string;
   grade: string;
+  term: string;
 }
 
 export default function Grades() {
@@ -26,9 +28,10 @@ export default function Grades() {
       <div className="space-y-4">
         {grades.map((g) => (
           <div key={g.courseId} className="p-4 bg-white shadow rounded-lg border">
-            <h2 className="font-semibold">{g.courseId} — {g.courseTitle}</h2>
+            <h2 className="font-semibold">{g.courseCode} — {g.courseTitle}</h2>
             <p className="text-gray-600">Faculty: {g.faculty}</p>
             <p className="text-lg font-bold mt-1">Grade: {g.grade}</p>
+            <p className="text-sm text-gray-500 mt-1">Term: {g.term}</p>
           </div>
         ))}
 

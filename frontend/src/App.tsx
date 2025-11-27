@@ -7,6 +7,7 @@ import Dashboard from './pages/Dashboard'
 import Courses from './pages/Courses'
 import DashboardLayout from './layouts/DashboardLayout'
 import Grades from './pages/Grades'
+import UploadGrades from './pages/UploadGrades'
 
 function App() {
   return (
@@ -23,7 +24,7 @@ function App() {
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="courses" element={<Courses />} />
           <Route path="grades" element={<Grades />} />
-          {/* <Route path="upload-grades" element={<UploadGrades />} /> */}
+          <Route path="upload-grades" element={<UploadGrades />} />
         </Route>
       </Routes>
     </BrowserRouter>

@@ -1,15 +1,33 @@
 import { Router } from "express";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from '../prisma';
 import { jwtMiddleware, AuthRequest } from "../authMiddleware";
 
 const router = Router();
-const prisma = new PrismaClient();
 
 // GET all courses
 router.get("/", jwtMiddleware, async (req, res) => {
-  const courses = await prisma.courses.findMany();
-  res.json(courses);
+  try {
+    const courses = await prisma.courses.findMany({
+      include: {
+        faculty: { select: { email: true } }
+      }
+    });
+
+    res.json(
+      courses.map(c => ({
+        id: c.id,
+        code: c.code,
+        title: c.title,
+        faculty: c.faculty.email,
+      }))
+    );
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to fetch courses" });
+  }
 });
+
 
 // POST new course (faculty only)
 router.post("/", jwtMiddleware, async (req: AuthRequest, res) => {
