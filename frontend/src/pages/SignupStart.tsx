@@ -142,7 +142,7 @@ function SignupStart() {
               href="/login" 
               className="text-lavender-gray-700 font-medium hover:text-lavender-gray-800 transition"
             >
-              Sign in
+              Log in
             </a>
           </div>
 

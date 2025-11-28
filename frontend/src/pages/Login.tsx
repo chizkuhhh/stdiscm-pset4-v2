@@ -73,7 +73,7 @@ function Login() {
                     </div>
                 </div>
 
-                {/* Confirm Password */}
+                {/* Password */}
                 <div className="mb-6">
                     <label htmlFor="password" className="text-sm font-medium text-gray-700">Password</label>
                     <div className="relative mt-1">
@@ -100,11 +100,22 @@ function Login() {
                     className="
                         w-full rounded-xl py-2.5 
                         bg-lavender-gray-700 hover:bg-lavender-gray-800 
-                        text-white font-medium transition
+                        text-white font-medium transition mb-6
                     "
                 >
                     Login
                 </button>
+
+                {/* Don't have an account */}
+                <div className="text-center text-sm mb-6">
+                    <span className="text-gray-600">Don't have an account? </span>
+                    <a 
+                    href="/signup" 
+                    className="text-lavender-gray-700 font-medium hover:text-lavender-gray-800 transition"
+                    >
+                    Sign up
+                    </a>
+                </div>
             </div>
         </div>
     )

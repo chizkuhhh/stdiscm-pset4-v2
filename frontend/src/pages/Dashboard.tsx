@@ -1,7 +1,10 @@
+import StudentDashboard from "./StudentDashboard"
+import FacultyDashboard from './FacultyDashboard'
+
 export default function Dashboard() {
+  const role = localStorage.getItem('role')
+
   return (
-    <div className="flex min-h-screen w-full bg-[#fafafa]">
-        <h1 className="text-2xl font-bold">Welcome to Dashboard!</h1>
-    </div>
+    role === "faculty" ? <FacultyDashboard /> : <StudentDashboard />
   )
 }

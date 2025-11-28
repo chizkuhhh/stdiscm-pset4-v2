@@ -8,6 +8,8 @@ import Courses from './pages/Courses'
 import DashboardLayout from './layouts/DashboardLayout'
 import Grades from './pages/Grades'
 import UploadGrades from './pages/UploadGrades'
+import OwnCourses from './pages/OwnCourses'
+import CourseStudents from './pages/CourseStudents'
 
 function App() {
   return (
@@ -25,6 +27,8 @@ function App() {
           <Route path="courses" element={<Courses />} />
           <Route path="grades" element={<Grades />} />
           <Route path="upload-grades" element={<UploadGrades />} />
+          <Route path="my-courses" element={<OwnCourses />}/>
+          <Route path="course/:courseId/students" element={<CourseStudents />} />
         </Route>
       </Routes>
     </BrowserRouter>

@@ -1,0 +1,7 @@
+{
+  "name": "backend-all",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently -n auth,course,grades,enroll -c cyan,magenta,green,yellow \"npm --prefix ./auth-service run dev\" \"npm --prefix ./course-service run dev\" \"npm --prefix ./grades-service run dev\" \"npm --prefix ./enrollment-service run dev\""
+  }
+}

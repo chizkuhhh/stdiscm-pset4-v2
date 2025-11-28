@@ -91,4 +91,32 @@ router.get("/mine", jwtMiddleware, async (req: AuthRequest, res) => {
   }
 });
 
+router.delete("/drop/:courseId", jwtMiddleware, async (req: AuthRequest, res) => {
+  try {
+    if (req.user?.role !== "student")
+      return res.status(403).json({ error: "Only students can drop classes" });
+
+    const courseId = Number(req.params.courseId);
+
+    // Check enrollment
+    const existing = await prisma.enrollments.findFirst({
+      where: {
+        courseId,
+        studentId: req.user.id,
+      },
+    });
+
+    if (!existing)
+      return res.status(400).json({ error: "You are not enrolled in this course" });
+
+    // Delete enrollment
+    await prisma.enrollments.delete({ where: { id: existing.id } });
+
+    res.json({ message: "Course dropped" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to drop course" });
+  }
+});
+
 export default router;

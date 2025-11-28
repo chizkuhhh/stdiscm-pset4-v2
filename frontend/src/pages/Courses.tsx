@@ -20,7 +20,7 @@ export default function Courses() {
   useEffect(() => {
     async function loadData() {
       // fetch courses
-      const res = await courseApi.get<Course[]>("/courses");
+      const res = await courseApi.get<Course[]>("/");
       setCourses(res.data);
 
       // fetch student's enrollments

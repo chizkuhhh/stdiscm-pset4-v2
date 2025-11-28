@@ -74,10 +74,14 @@ function Sidebar() {
           )}
         </div>
 
+        {/* Role */}
+        <p>{role}</p>
+
         {/* Nav Links */}
         <nav className="space-y-3 mt-4">
           <SidebarItem icon={faHouse} label="Dashboard" to="/dashboard" collapsed={collapsed} />
-          <SidebarItem icon={faGlasses} label="View Courses" to="/courses" collapsed={collapsed} />
+          <SidebarItem icon={faGlasses} label="View All Courses" to="/courses" collapsed={collapsed} />
+          <SidebarItem icon={faChalkboardUser} label="My Courses" to="/my-courses" collapsed={collapsed} />
           {role === 'student' && (
             <SidebarItem icon={faRankingStar} label="Previous Grades" to="/grades" collapsed={collapsed} />
           )}
