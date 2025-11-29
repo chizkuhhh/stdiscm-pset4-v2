@@ -239,20 +239,12 @@ function FacultyCoursesView({ courses }: { courses: FacultyCourse[] }) {
               )}
             </div>
 
-            <div className="flex gap-2">
-              <Link
-                to={`/course/${c.id}/students`}
-                className="flex-1 text-center px-4 py-2 bg-lavender-gray-700 text-white rounded-lg hover:bg-lavender-gray-800 transition font-medium text-sm"
-              >
-                View Students
-              </Link>
-              <Link
-                to={`/upload-grades?course=${c.id}`}
-                className="flex-1 text-center px-4 py-2 bg-lavender-gray-600 text-white rounded-lg hover:bg-lavender-gray-700 transition font-medium text-sm"
-              >
-                Upload Grades
-              </Link>
-            </div>
+            <Link
+              to={`/course/${c.id}/students`}
+              className="flex-1 text-center px-4 py-2 bg-lavender-gray-700 text-white rounded-lg hover:bg-lavender-gray-800 transition font-medium text-sm"
+            >
+              View Students
+            </Link>
           </div>
         );
       })}

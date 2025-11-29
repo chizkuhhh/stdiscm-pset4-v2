@@ -88,7 +88,7 @@ export default function FacultyDashboard() {
 
       {/* Courses teaching */}
       <section>
-        <h2 className="text-xl font-semibold mb-4">Your Courses</h2>
+        <h2 className="text-xl font-semibold mb-4">Courses You Teach</h2>
 
         <div className="space-y-3">
           {myCourses.map((c) => {
@@ -116,8 +116,7 @@ export default function FacultyDashboard() {
                   )}
                 </div>
 
-                <div className="mt-3 flex space-x-2">
-                  <DashButton label="Upload Grades" to={`/upload-grades?course=${c.id}`} />
+                <div className="mt-3">
                   <DashButton label="View Enrolled Students" to={`/course/${c.id}/students`} />
                 </div>
               </div>
