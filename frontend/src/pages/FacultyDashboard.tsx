@@ -7,11 +7,14 @@ interface Course {
   code: string;
   title: string;
   capacity?: number | null;
-  isOpen: boolean;
+}
+
+interface CourseWithCount extends Course {
+  enrolledCount: number;
 }
 
 export default function FacultyDashboard() {
-  const [myCourses, setMyCourses] = useState<Course[]>([]);
+  const [myCourses, setMyCourses] = useState<CourseWithCount[]>([]);
   const [totalStudents, setTotalStudents] = useState<number>(0);
 
   useEffect(() => {
@@ -23,20 +26,25 @@ export default function FacultyDashboard() {
         const res = await courseApi.get("/my-courses");
 
         if (!isMounted) return;
-        setMyCourses(res.data);
 
-        // Fetch total enrolled students across all courses
+        // Fetch enrolled students for each course
+        const coursesWithCounts: CourseWithCount[] = [];
         let studentCount = 0;
+
         for (const course of res.data) {
           try {
             const studentsRes = await courseApi.get(`${course.id}/students`);
-            studentCount += studentsRes.data.totalEnrolled;
+            const enrolledCount = studentsRes.data.totalEnrolled;
+            coursesWithCounts.push({ ...course, enrolledCount });
+            studentCount += enrolledCount;
           } catch (err) {
             console.error(`Failed to fetch students for course ${course.id}:`, err);
+            coursesWithCounts.push({ ...course, enrolledCount: 0 });
           }
         }
 
         if (!isMounted) return;
+        setMyCourses(coursesWithCounts);
         setTotalStudents(studentCount);
 
       } catch (err) {
@@ -50,6 +58,11 @@ export default function FacultyDashboard() {
       isMounted = false;
     };
   }, []);
+
+  const openCourses = myCourses.filter(c => {
+    const isFull = c.capacity ? c.enrolledCount >= c.capacity : false;
+    return !isFull;
+  }).length;
 
   return (
     <div className="p-6">
@@ -69,7 +82,7 @@ export default function FacultyDashboard() {
 
         <DashboardCard
           title="Open Courses"
-          value={myCourses.filter(c => c.isOpen).length}
+          value={openCourses}
         />
       </div>
 
@@ -78,31 +91,38 @@ export default function FacultyDashboard() {
         <h2 className="text-xl font-semibold mb-4">Your Courses</h2>
 
         <div className="space-y-3">
-          {myCourses.map((c) => (
-            <div key={c.id} className="p-4 bg-white border rounded-lg shadow-sm">
-              <div className="flex justify-between items-start">
-                <div>
-                  <h3 className="font-semibold">{c.code} — {c.title}</h3>
-                  <p className="text-sm text-gray-600">
-                    {c.capacity ? `Capacity: ${c.capacity}` : 'No capacity limit'} • 
-                    {c.isOpen ? ' Open for enrollment' : ' Closed'}
-                  </p>
-                </div>
-                <span className={`px-2 py-1 rounded text-xs font-medium ${
-                  c.isOpen 
-                    ? 'bg-green-100 text-green-800' 
-                    : 'bg-gray-100 text-gray-800'
-                }`}>
-                  {c.isOpen ? 'OPEN' : 'CLOSED'}
-                </span>
-              </div>
+          {myCourses.map((c) => {
+            const isFull = c.capacity ? c.enrolledCount >= c.capacity : false;
 
-              <div className="mt-3 flex space-x-2">
-                <DashButton label="Upload Grades" to={`/upload-grades?course=${c.id}`} />
-                <DashButton label="View Enrolled Students" to={`/course/${c.id}/students`} />
+            return (
+              <div key={c.id} className="p-4 bg-white border rounded-lg shadow-sm">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <h3 className="font-semibold">{c.code} — {c.title}</h3>
+                    <p className="text-sm text-gray-600">
+                      Enrolled: {c.enrolledCount}
+                      {c.capacity && ` / ${c.capacity}`}
+                      {!c.capacity && ' • No capacity limit'}
+                    </p>
+                  </div>
+                  {c.capacity && (
+                    <span className={`px-2 py-1 rounded text-xs font-medium ${
+                      isFull 
+                        ? 'bg-red-100 text-red-800' 
+                        : 'bg-green-100 text-green-800'
+                    }`}>
+                      {isFull ? 'FULL' : 'OPEN'}
+                    </span>
+                  )}
+                </div>
+
+                <div className="mt-3 flex space-x-2">
+                  <DashButton label="Upload Grades" to={`/upload-grades?course=${c.id}`} />
+                  <DashButton label="View Enrolled Students" to={`/course/${c.id}/students`} />
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
 
           {myCourses.length === 0 && (
             <p className="text-gray-600">You are not assigned to any courses yet.</p>

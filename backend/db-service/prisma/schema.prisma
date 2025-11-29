@@ -32,7 +32,6 @@ model Courses {
   faculty   Users     @relation("FacultyCourses", fields: [facultyId], references: [id])
 
   capacity  Int?
-  isOpen    Boolean @default(true)
 
   enrollments Enrollments[]
   grades      Grades[]

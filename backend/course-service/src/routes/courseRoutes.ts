@@ -19,8 +19,7 @@ router.get("/my-courses", jwtMiddleware, async (req: AuthRequest, res) => {
         id: true,
         code: true,
         title: true,
-        capacity: true,
-        isOpen: true,
+        capacity: true
       },
     });
 
@@ -95,7 +94,8 @@ router.get("/", jwtMiddleware, async (req, res) => {
   try {
     const courses = await prisma.courses.findMany({
       include: {
-        faculty: { select: { email: true } }
+        faculty: { select: { email: true } },
+        enrollments: true
       }
     });
 
@@ -105,6 +105,8 @@ router.get("/", jwtMiddleware, async (req, res) => {
         code: c.code,
         title: c.title,
         faculty: c.faculty.email,
+        capacity: c.capacity,
+        enrolledCount: c.enrollments.length
       }))
     );
 

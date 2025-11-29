@@ -2,12 +2,14 @@ import { useEffect, useState } from "react";
 import { enrollmentApi } from "../api/enrollmentApi";
 import { courseApi } from "../api/courseApi";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
 interface StudentCourse {
   courseId: number;
   code: string;
   title: string;
   faculty: string;
+  enrolledAt: string;
 }
 
 interface FacultyCourse {
@@ -15,7 +17,7 @@ interface FacultyCourse {
   code: string;
   title: string;
   capacity?: number | null;
-  isOpen: boolean;
+  enrolledCount?: number;
 }
 
 export default function OwnCourses() {
@@ -25,48 +27,99 @@ export default function OwnCourses() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let isMounted = true;
+
     async function load() {
       try {
+        setLoading(true);
+
         if (role === "student") {
           const res = await enrollmentApi.get<StudentCourse[]>("/mine");
-          setStudentCourses(res.data);
+          if (isMounted) setStudentCourses(res.data);
         } else if (role === "faculty") {
           const res = await courseApi.get<FacultyCourse[]>("/my-courses");
-          setFacultyCourses(res.data);
+          
+          if (!isMounted) return;
+
+          // Fetch enrollment counts for each course
+          const coursesWithCounts = await Promise.all(
+            res.data.map(async (course) => {
+              try {
+                const studentsRes = await courseApi.get(`${course.id}/students`);
+                return {
+                  ...course,
+                  enrolledCount: studentsRes.data.totalEnrolled
+                };
+              } catch (err) {
+                console.log(err)
+                return { ...course, enrolledCount: 0 };
+              }
+            })
+          );
+
+          if (isMounted) setFacultyCourses(coursesWithCounts);
         }
       } catch (err) {
-        console.error(err);
+        console.error("Failed to load courses:", err);
       } finally {
-        setLoading(false);
+        if (isMounted) setLoading(false);
       }
     }
 
     load();
+
+    return () => {
+      isMounted = false;
+    };
   }, [role]);
 
-  async function drop(courseId: number) {
-    if (!confirm("Are you sure you want to drop this course?")) return;
+  async function drop(courseId: number, courseName: string) {
+    if (!window.confirm(`Are you sure you want to drop ${courseName}?`)) return;
 
     try {
       await enrollmentApi.delete(`/drop/${courseId}`);
-      alert("Course dropped.");
-
-      // refresh
+      
+      // Update state locally
       setStudentCourses((prev) => prev.filter((c) => c.courseId !== courseId));
+      
+      // Success feedback
+      alert("Course dropped successfully!");
     } catch (err) {
       console.error(err);
-      alert("Failed to drop course.");
+      
+      let errorMsg = "Failed to drop course.";
+      if (axios.isAxiosError(err) && err.response?.data?.error) {
+        errorMsg = err.response.data.error;
+      }
+      
+      alert(errorMsg);
     }
   }
 
-  if (loading) return <p className="p-6">Loading...</p>;
+  if (loading) {
+    return (
+      <div className="p-6">
+        <p className="text-gray-600">Loading your courses...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6">
-        {role === "student" ? "My Enrolled Courses" : "Courses You Teach"}
-      </h1>
+      {/* Header */}
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold">
+          {role === "student" ? "My Enrolled Courses" : "Courses You Teach"}
+        </h1>
+        <p className="text-gray-600 mt-1">
+          {role === "student" 
+            ? `You are enrolled in ${studentCourses.length} course${studentCourses.length !== 1 ? 's' : ''}`
+            : `You are teaching ${facultyCourses.length} course${facultyCourses.length !== 1 ? 's' : ''}`
+          }
+        </p>
+      </div>
 
+      {/* Content */}
       {role === "student" && (
         <StudentCoursesView courses={studentCourses} onDrop={drop} />
       )}
@@ -84,26 +137,50 @@ function StudentCoursesView({
   onDrop,
 }: {
   courses: StudentCourse[];
-  onDrop: (id: number) => void;
+  onDrop: (id: number, name: string) => void;
 }) {
-  if (courses.length === 0)
-    return <p className="text-gray-600">You are not enrolled in any courses.</p>;
+  if (courses.length === 0) {
+    return (
+      <div className="bg-gray-50 border border-gray-200 rounded-lg p-8 text-center">
+        <p className="text-gray-600 mb-4">You are not enrolled in any courses yet.</p>
+        <Link
+          to="/courses"
+          className="inline-block px-6 py-3 bg-lavender-gray-700 text-white rounded-lg hover:bg-lavender-gray-800 transition"
+        >
+          Browse Available Courses
+        </Link>
+      </div>
+    );
+  }
 
   return (
-    <div className="space-y-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       {courses.map((c) => (
-        <div key={c.courseId} className="p-4 bg-white shadow rounded-lg border">
-          <h2 className="font-semibold text-lg">
-            {c.code} — {c.title}
-          </h2>
-          <p className="text-gray-600 text-sm">Faculty: {c.faculty}</p>
+        <div 
+          key={c.courseId} 
+          className="p-5 bg-white shadow-sm rounded-lg border hover:shadow-md transition-shadow
+                      grid grid-cols-1 items-baseline-last"
+        >
+          <div className="mb-3 self-start">
+            <h2 className="font-bold text-lg mb-1">
+              {c.code} — {c.title}
+            </h2>
+            <p className="text-sm text-gray-600">
+              <span className="font-medium">Faculty:</span> {c.faculty}
+            </p>
+            <p className="text-xs text-gray-500 mt-1">
+              Enrolled: {new Date(c.enrolledAt).toLocaleDateString()}
+            </p>
+          </div>
 
-          <button
-            onClick={() => onDrop(c.courseId)}
-            className="mt-3 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
-          >
-            Drop Course
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={() => onDrop(c.courseId, `${c.code} - ${c.title}`)}
+              className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition font-medium text-sm"
+            >
+              Drop Course
+            </button>
+          </div>
         </div>
       ))}
     </div>
@@ -114,27 +191,71 @@ function StudentCoursesView({
    FACULTY VIEW COMPONENT
 ---------------------------------------------------------- */
 function FacultyCoursesView({ courses }: { courses: FacultyCourse[] }) {
-  if (courses.length === 0)
-    return <p className="text-gray-600">You are not assigned to any courses.</p>;
+  if (courses.length === 0) {
+    return (
+      <div className="bg-gray-50 border border-gray-200 rounded-lg p-8 text-center">
+        <p className="text-gray-600">You are not assigned to any courses yet.</p>
+      </div>
+    );
+  }
 
   return (
-    <div className="space-y-4">
-      {courses.map((c) => (
-        <div key={c.id} className="p-4 bg-white shadow rounded-lg border">
-          <h2 className="font-semibold text-lg">
-            {c.code} — {c.title}
-          </h2>
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      {courses.map((c) => {
+        const isFull = c.capacity ? (c.enrolledCount || 0) >= c.capacity : false;
 
-          <div className="mt-3">
-            <Link
-              to={`/course/${c.id}/students`}
-              className="px-4 py-2 bg-lavender-gray-700 text-white rounded hover:bg-lavender-gray-800"
-            >
-              View Students
-            </Link>
+        return (
+          <div 
+            key={c.id} 
+            className="p-5 bg-white shadow-sm rounded-lg border hover:shadow-md transition-shadow"
+          >
+            <div className="flex justify-between items-start mb-3">
+              <div>
+                <h2 className="font-bold text-lg">
+                  {c.code}
+                </h2>
+                <h3 className="text-gray-900 font-medium">
+                  {c.title}
+                </h3>
+              </div>
+              {c.capacity && (
+                <span className={`px-2 py-1 text-xs font-medium rounded ${
+                  isFull 
+                    ? 'bg-red-100 text-red-800' 
+                    : 'bg-green-100 text-green-800'
+                }`}>
+                  {isFull ? 'FULL' : 'OPEN'}
+                </span>
+              )}
+            </div>
+
+            <div className="mb-4">
+              <p className="text-sm text-gray-600">
+                <span className="font-medium">Enrolled:</span> {c.enrolledCount || 0}
+                {c.capacity && ` / ${c.capacity}`}
+              </p>
+              {!c.capacity && (
+                <p className="text-xs text-gray-500 italic">No capacity limit</p>
+              )}
+            </div>
+
+            <div className="flex gap-2">
+              <Link
+                to={`/course/${c.id}/students`}
+                className="flex-1 text-center px-4 py-2 bg-lavender-gray-700 text-white rounded-lg hover:bg-lavender-gray-800 transition font-medium text-sm"
+              >
+                View Students
+              </Link>
+              <Link
+                to={`/upload-grades?course=${c.id}`}
+                className="flex-1 text-center px-4 py-2 bg-lavender-gray-600 text-white rounded-lg hover:bg-lavender-gray-700 transition font-medium text-sm"
+              >
+                Upload Grades
+              </Link>
+            </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }
