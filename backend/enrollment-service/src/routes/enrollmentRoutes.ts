@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { prisma } from "../prisma";
+import { prismaRead, prismaWrite } from "../prisma";
 import { jwtMiddleware, AuthRequest } from "../authMiddleware";
 
 const router = Router();
@@ -13,7 +13,7 @@ router.get("/mine", jwtMiddleware, async (req: AuthRequest, res) => {
       return res.status(403).json({ error: "Only students can view enrollments" });
     }
 
-    const enrollments = await prisma.enrollments.findMany({
+    const enrollments = await prismaRead.enrollments.findMany({
       where: { studentId: req.user.id },
       include: {
         course: {
@@ -46,7 +46,7 @@ router.delete("/drop/:courseId", jwtMiddleware, async (req: AuthRequest, res) =>
     const courseId = Number(req.params.courseId);
 
     // Check enrollment
-    const existing = await prisma.enrollments.findFirst({
+    const existing = await prismaRead.enrollments.findFirst({
       where: {
         courseId,
         studentId: req.user.id,
@@ -57,7 +57,7 @@ router.delete("/drop/:courseId", jwtMiddleware, async (req: AuthRequest, res) =>
       return res.status(400).json({ error: "You are not enrolled in this course" });
 
     // Delete enrollment
-    await prisma.enrollments.delete({ where: { id: existing.id } });
+    await prismaWrite.enrollments.delete({ where: { id: existing.id } });
 
     res.json({ message: "Course dropped" });
   } catch (err) {
@@ -80,11 +80,11 @@ router.post("/", jwtMiddleware, async (req: AuthRequest, res) => {
     if (!courseId) return res.status(400).json({ error: "courseId required" });
 
     // Check course exists
-    const course = await prisma.courses.findUnique({ where: { id: Number(courseId) } });
+    const course = await prismaRead.courses.findUnique({ where: { id: Number(courseId) } });
     if (!course) return res.status(404).json({ error: "Course not found" });
 
     // Check capacity
-    const currentCount = await prisma.enrollments.count({
+    const currentCount = await prismaRead.enrollments.count({
       where: { courseId: Number(courseId) }
     });
 
@@ -93,7 +93,7 @@ router.post("/", jwtMiddleware, async (req: AuthRequest, res) => {
     }
 
     // Check if already enrolled
-    const existing = await prisma.enrollments.findFirst({
+    const existing = await prismaRead.enrollments.findFirst({
       where: {
         courseId: Number(courseId),
         studentId: req.user.id
@@ -105,7 +105,7 @@ router.post("/", jwtMiddleware, async (req: AuthRequest, res) => {
     }
 
     // Create enrollment
-    const enroll = await prisma.enrollments.create({
+    const enroll = await prismaWrite.enrollments.create({
       data: {
         courseId: Number(courseId),
         studentId: req.user.id

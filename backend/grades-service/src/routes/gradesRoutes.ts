@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { jwtMiddleware, AuthRequest } from "../authMiddleware";
-import { prisma } from "../prisma";
+import { prismaRead, prismaWrite } from "../prisma";
 
 const router = Router();
 
@@ -12,14 +12,14 @@ router.get("/", jwtMiddleware, async (req: AuthRequest, res) => {
   const studentEmail = req.user.email;
 
   // Get student's DB record
-  const student = await prisma.users.findUnique({
+  const student = await prismaRead.users.findUnique({
     where: { email: studentEmail },
   });
 
   if (!student) return res.status(404).json({ error: "Student not found" });
 
   // Fetch grades with course + faculty name
-  const grades = await prisma.grades.findMany({
+  const grades = await prismaRead.grades.findMany({
     where: { studentId: student.id },
     include: {
       course: {
@@ -57,14 +57,14 @@ router.post("/upload", jwtMiddleware, async (req: AuthRequest, res) => {
   }
 
   // Get faculty user
-  const faculty = await prisma.users.findUnique({
+  const faculty = await prismaRead.users.findUnique({
     where: { email: req.user.email }
   });
 
   if (!faculty) return res.status(404).json({ error: "Faculty not found" });
 
   // Fetch course taught by faculty
-  const course = await prisma.courses.findFirst({
+  const course = await prismaRead.courses.findFirst({
     where: {
       code: courseCode,
       facultyId: faculty.id,
@@ -75,7 +75,7 @@ router.post("/upload", jwtMiddleware, async (req: AuthRequest, res) => {
     return res.status(404).json({ error: "Course not found or not taught by you" });
 
   // Get student
-  const student = await prisma.users.findUnique({
+  const student = await prismaRead.users.findUnique({
     where: { email: studentEmail },
   });
 
@@ -83,7 +83,7 @@ router.post("/upload", jwtMiddleware, async (req: AuthRequest, res) => {
     return res.status(404).json({ error: "Student not found" });
 
   // Create grade record
-  const newGrade = await prisma.grades.create({
+  const newGrade = await prismaWrite.grades.create({
     data: {
       courseId: course.id,
       studentId: student.id,

@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  postgres-primary:
+    image: postgres:15-alpine
+    container_name: enrollment-db-primary
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: enrollment
+    ports:
+      - "5434:5432"
+    volumes:
+      - primary-data:/var/lib/postgresql/data
+    command:
+      - "postgres"
+      - "-c"
+      - "wal_level=logical"
+
+  postgres-replica:
+    image: postgres:15-alpine
+    container_name: enrollment-db-replica
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: enrollment
+    ports:
+      - "5435:5432"
+    volumes:
+      - replica-data:/var/lib/postgresql/data
+    depends_on:
+      - postgres-primary
+
+volumes:
+  primary-data:
+  replica-data:
