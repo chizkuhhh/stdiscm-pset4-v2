@@ -1,3 +1,6 @@
+# Distributed Fault Tolerance (Online Enrollment System)
+A fault-tolerant distributed enrollment system with database redundancy and individual microservices.
+
 ## Architecture Overview
 
 ### Microservices (Independent Nodes)
