@@ -8,6 +8,7 @@ interface StudentCourse {
   courseId: number;
   code: string;
   title: string;
+  section: string;
   faculty: string;
   enrolledAt: string;
 }
@@ -16,6 +17,7 @@ interface FacultyCourse {
   id: number;
   code: string;
   title: string;
+  section: string;
   capacity?: number | null;
   enrolledCount?: number;
 }
@@ -212,7 +214,7 @@ function FacultyCoursesView({ courses }: { courses: FacultyCourse[] }) {
             <div className="flex justify-between items-start mb-3">
               <div>
                 <h2 className="font-bold text-lg">
-                  {c.code}
+                  {c.code} (Section {c.section}) — {c.title}
                 </h2>
                 <h3 className="text-gray-900 font-medium">
                   {c.title}

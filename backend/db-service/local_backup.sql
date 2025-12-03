@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict nhaNviMu9gDrGeybqAakIT01tb1J0TRYeLrtGur2YBgoJNIUNnCzMTvZbN8oBGh
+\restrict VM8rlABbVvAXruaqKbSa6rGRab0gN3M16SbZY8T6MtB1hzoc2PIWlIpD9OM0xNI
 
 -- Dumped from database version 16.11
 -- Dumped by pg_dump version 16.11
@@ -261,20 +261,20 @@ COPY public."Courses" (id, code, title, "facultyId", capacity) FROM stdin;
 --
 
 COPY public."Enrollments" (id, "courseId", "studentId", "createdAt") FROM stdin;
-1	1	4	2025-11-29 00:17:15.775
-2	1	5	2025-11-29 00:17:15.777
-3	1	6	2025-11-29 00:17:15.778
-4	1	7	2025-11-29 00:17:15.78
-5	2	8	2025-11-29 00:17:15.781
-6	2	9	2025-11-29 00:17:15.782
-7	3	4	2025-11-29 00:17:15.784
-8	3	6	2025-11-29 00:17:15.785
-9	3	8	2025-11-29 00:17:15.787
-10	3	10	2025-11-29 00:17:15.789
-11	4	5	2025-11-29 00:17:15.79
-12	4	7	2025-11-29 00:17:15.791
-13	4	11	2025-11-29 00:17:15.792
-14	5	9	2025-11-29 00:17:15.794
+1	1	4	2025-11-29 06:17:34.093
+2	1	5	2025-11-29 06:17:34.095
+3	1	6	2025-11-29 06:17:34.097
+4	1	7	2025-11-29 06:17:34.098
+5	2	8	2025-11-29 06:17:34.1
+6	2	9	2025-11-29 06:17:34.102
+7	3	4	2025-11-29 06:17:34.103
+8	3	6	2025-11-29 06:17:34.105
+9	3	8	2025-11-29 06:17:34.106
+10	3	10	2025-11-29 06:17:34.107
+11	4	5	2025-11-29 06:17:34.109
+12	4	7	2025-11-29 06:17:34.11
+13	4	11	2025-11-29 06:17:34.111
+14	5	9	2025-11-29 06:17:34.112
 \.
 
 
@@ -283,13 +283,11 @@ COPY public."Enrollments" (id, "courseId", "studentId", "createdAt") FROM stdin;
 --
 
 COPY public."Grades" (id, "courseId", "studentId", grade, term, "createdAt") FROM stdin;
-1	1	4	A	2024 Term 1	2025-11-29 00:17:15.797
-2	1	5	B+	2024 Term 1	2025-11-29 00:17:15.8
-3	1	6	A-	2024 Term 1	2025-11-29 00:17:15.802
-4	2	8	A	2024 Term 1	2025-11-29 00:17:15.804
-5	2	9	B	2024 Term 1	2025-11-29 00:17:15.805
-6	4	11	C-	2024 Term 3	2025-11-29 01:33:27.492
-7	4	7	A+	2025 Term 2	2025-11-29 01:56:20.931
+1	1	4	A	2024 Term 1	2025-11-29 06:17:34.115
+2	1	5	B+	2024 Term 1	2025-11-29 06:17:34.118
+3	1	6	A-	2024 Term 1	2025-11-29 06:17:34.119
+4	2	8	A	2024 Term 1	2025-11-29 06:17:34.121
+5	2	9	B	2024 Term 1	2025-11-29 06:17:34.122
 \.
 
 
@@ -298,17 +296,17 @@ COPY public."Grades" (id, "courseId", "studentId", grade, term, "createdAt") FRO
 --
 
 COPY public."Users" (id, email, "passwordHash", role) FROM stdin;
-1	prof.jane@school.com	$2b$10$DVuQgwnaUkGRheUrrTMe5e5IkCvQBvvYqoIWYV2lVsTYm.p/.FS0y	faculty
-2	prof.john@school.com	$2b$10$nZw1MlygblNKNrsf8MN09.liZFbDVRGNtYjaStuZy0UCER9DWbxty	faculty
-3	prof.maria@school.com	$2b$10$kutCZe9byG7aUXU/97Oi/OyhNCavdi9p3o5o6EcMIttI2Ha8DAlzu	faculty
-4	student.anna@school.com	$2b$10$GXFL7GqnhkJDEFxtykfbj.KvT9zspVCvDq64lg0DyIHLofsDWmyfa	student
-5	student.ben@school.com	$2b$10$aFT8bKeKz0Sy5p44rG2JlO/9/Yluci7Ea2I.aCgptoCVTF95an7Oi	student
-6	student.cara@school.com	$2b$10$EFSnzk1w2tzh4C23EzHyj.Ns5NiPWc0s/CkxDXbYIE44/ILglXIGK	student
-7	student.david@school.com	$2b$10$eyBCcLTO3l3l0o0AKa2CLOR1Nuf5rNJB3kCUOl8a09PukYgJLuVIG	student
-8	student.emma@school.com	$2b$10$4b379Qodg6/DpMLapCHhg.A9Mi4VCtwJ6hJlwf04zDCzIXXUX1XH2	student
-9	student.frank@school.com	$2b$10$9A62mvuYtNa9Imk70UsqQ.qXsG.oMJFvVlIzQFvrYfkKMGvhL/gLS	student
-10	student.grace@school.com	$2b$10$pZhPp9eLFbaJqPDdJQavCuGJl4Fa/lfZjHbInjsKlF9ZmafTFwn92	student
-11	student.henry@school.com	$2b$10$X15lCnW1ZRqCRqzbrEUPTOLlYlIp5GoQW9s8.uYI3bAOzpCW0Fl4i	student
+1	prof.jane@school.com	$2b$10$FLBn9Ffih.5LkYL/JkNeX.2bMiX1Wy1AzHh4zF.gVeB24g9ZwbgE6	faculty
+2	prof.john@school.com	$2b$10$cn61iegW9ARnJXthsmTB8uSryVww2G3ZHB5ctIKqq9zvqFzdSLMja	faculty
+3	prof.maria@school.com	$2b$10$awhu7cb89MjwaxeLTHfobu08/mrieWkkX.mWQ1LQzXvB.XqfnrHUK	faculty
+4	student.anna@school.com	$2b$10$iySNfAP2HnL4ExXBN6Ij1.gXDSpPVYESsdSnhCI0cbsVvVIe3V49O	student
+5	student.ben@school.com	$2b$10$XUW3t3sRkZpiZd6mb.plyO4uZdXP/Rne3fJMNuWmd0zSN4Deu24m6	student
+6	student.cara@school.com	$2b$10$n5Z8joeDCF4P/kIueYDuZu5gByNb5s/IoZYQ3aUD0ERZrpS3pTwOq	student
+7	student.david@school.com	$2b$10$mgDOil7zSOIQUWoj/P7i6u/Da4y25r0e64xsMEN.ajkqMO18rkTpK	student
+8	student.emma@school.com	$2b$10$E5iBpDiSDOQatlFVlreyFudjYDIvrT/be7EBISiODl7Ot2ZuhwbTG	student
+9	student.frank@school.com	$2b$10$U6NwkxAgdjIQ8QIrmOVIs.hGYk.GDjFXZ33ml5inFHPv/HEFRsEBa	student
+10	student.grace@school.com	$2b$10$F8ZfkQ9N.VaUmuCrytW9UeBDeD5LUWnHtNzvaHV8gV4YIEt6fcp4K	student
+11	student.henry@school.com	$2b$10$zNTsrl0KCyvapKLMDghh8ucwzeolcUW/1R8ofQk7e/et9.YIa4FG.	student
 \.
 
 
@@ -317,8 +315,7 @@ COPY public."Users" (id, email, "passwordHash", role) FROM stdin;
 --
 
 COPY public._prisma_migrations (id, checksum, finished_at, migration_name, logs, rolled_back_at, started_at, applied_steps_count) FROM stdin;
-adbe609a-1e3b-48a0-96c6-a1358c87f28e	1c5a6a965f914ac77510257c7f92ad8b5b8e179584af459f7526c8799fbbfdb8	2025-11-29 08:17:04.212766+08	20251127100053_init	\N	\N	2025-11-29 08:17:04.182006+08	1
-b76781e6-205b-4f40-9eeb-723f49f2249c	9111e3e6063616ddf049aa4dc73e4dfa3644fb5f3a9950ef77c0171b6209cafe	2025-11-29 11:14:16.696271+08	20251129031416_remove_isopen	\N	\N	2025-11-29 11:14:16.693125+08	1
+aacf0671-88f0-4ad0-bcd0-e6ff8156a3dd	239fc9d01ba65a1c4cac72ce376defda3fdb04441abc840f20a2a66973b07fe7	2025-11-29 14:17:31.95669+08	20251129061701_edit_seed	\N	\N	2025-11-29 14:17:31.925433+08	1
 \.
 
 
@@ -340,7 +337,7 @@ SELECT pg_catalog.setval('public."Enrollments_id_seq"', 14, true);
 -- Name: Grades_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public."Grades_id_seq"', 7, true);
+SELECT pg_catalog.setval('public."Grades_id_seq"', 5, true);
 
 
 --
@@ -448,5 +445,5 @@ REVOKE USAGE ON SCHEMA public FROM PUBLIC;
 -- PostgreSQL database dump complete
 --
 
-\unrestrict nhaNviMu9gDrGeybqAakIT01tb1J0TRYeLrtGur2YBgoJNIUNnCzMTvZbN8oBGh
+\unrestrict VM8rlABbVvAXruaqKbSa6rGRab0gN3M16SbZY8T6MtB1hzoc2PIWlIpD9OM0xNI
 

@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package enrollment;
+
+service EnrollmentService {
+  // Get enrollment count for a course
+  rpc GetEnrollmentCount (CourseIdRequest) returns (EnrollmentCountResponse);
+  
+  // Check if course has capacity for new enrollment
+  rpc CheckCapacity (CourseIdRequest) returns (CapacityResponse);
+  
+  // Get all enrollments for a course (with student details)
+  rpc GetCourseEnrollments (CourseIdRequest) returns (CourseEnrollmentsResponse);
+}
+
+message CourseIdRequest {
+  int32 course_id = 1;
+}
+
+message EnrollmentCountResponse {
+  int32 course_id = 1;
+  int32 enrolled_count = 2;
+}
+
+message CapacityResponse {
+  int32 course_id = 1;
+  bool has_capacity = 2;
+  int32 current_count = 3;
+  int32 max_capacity = 4;
+}
+
+message StudentInfo {
+  int32 student_id = 1;
+  string email = 2;
+  string enrolled_at = 3;
+}
+
+message CourseEnrollmentsResponse {
+  int32 course_id = 1;
+  repeated StudentInfo students = 2;
+  int32 total_enrolled = 3;
+}

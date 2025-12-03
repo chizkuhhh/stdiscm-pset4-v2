@@ -18,7 +18,6 @@ CREATE TABLE "Courses" (
     "title" TEXT NOT NULL,
     "facultyId" INTEGER NOT NULL,
     "capacity" INTEGER,
-    "isOpen" BOOLEAN NOT NULL DEFAULT true,
 
     CONSTRAINT "Courses_pkey" PRIMARY KEY ("id")
 );

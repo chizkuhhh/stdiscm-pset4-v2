@@ -6,7 +6,10 @@ interface Course {
   id: number;
   code: string;
   title: string;
+  section: string;  // Add this
+  faculty: string;
   capacity?: number | null;
+  enrolledCount?: number;
 }
 
 interface CourseWithCount extends Course {
@@ -98,7 +101,7 @@ export default function FacultyDashboard() {
               <div key={c.id} className="p-4 bg-white border rounded-lg shadow-sm">
                 <div className="flex justify-between items-start">
                   <div>
-                    <h3 className="font-semibold">{c.code} — {c.title}</h3>
+                    <h3 className="font-semibold">{c.code} Section {c.section} — {c.title}</h3>
                     <p className="text-sm text-gray-600">
                       Enrolled: {c.enrolledCount}
                       {c.capacity && ` / ${c.capacity}`}

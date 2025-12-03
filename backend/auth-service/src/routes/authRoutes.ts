@@ -66,23 +66,38 @@ router.post('/signup/complete', async (req, res) => {
   
   const hash = await bcrypt.hash(password, 10)
 
-  const newUser = await prisma.users.create({
-    data: {
-      email,
-      passwordHash: hash,
-      role
-    }
-  })
+  console.log("About to create user:", { email, role });
 
-  return res.json({
-    message: "Account created!",
-    user: {
-      email: newUser.email,
-      role: newUser.role,
-    },
-  })
+  try {
+    // Get the max ID and add 1
+    const maxUser = await prisma.users.findFirst({
+      orderBy: { id: 'desc' }
+    });
+    const nextId = (maxUser?.id || 0) + 1;
+    
+    console.log("Using ID:", nextId);
+
+    const newUser = await prisma.users.create({
+      data: {
+        id: nextId,  // Explicitly set ID
+        email,
+        passwordHash: hash,
+        role
+      }
+    })
+
+    return res.json({
+      message: "Account created!",
+      user: {
+        email: newUser.email,
+        role: newUser.role,
+      },
+    })
+  } catch (error) {
+    console.error("Full error:", error);
+    return res.status(500).json({ message: "Error creating account" });
+  }
 });
-
 
 /*
   LOGIN

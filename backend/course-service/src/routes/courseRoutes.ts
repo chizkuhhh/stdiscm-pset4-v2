@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { prisma } from '../prisma';
 import { jwtMiddleware, AuthRequest } from "../authMiddleware";
+import { getEnrollmentCount, getCourseEnrollments } from "../grpcClient";
 
 const router = Router();
 
@@ -23,7 +24,20 @@ router.get("/my-courses", jwtMiddleware, async (req: AuthRequest, res) => {
       },
     });
 
-    res.json(courses);
+    // get enrollment counts with gRPC
+    const coursesWithCounts = await Promise.all(
+      courses.map(async (course) => {
+        try {
+          const enrolledCount = await getEnrollmentCount(course.id)
+          return { ...course, enrolledCount }
+        } catch (err) {
+          console.error(`Failed to get course cound for course ${course.id}:`, err)
+          return { ...course, enrolledCount: 0}
+        }
+      })
+    )
+
+    res.json(coursesWithCounts);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Failed to fetch faculty courses" });
@@ -53,21 +67,8 @@ router.get("/:courseId/students", jwtMiddleware, async (req: AuthRequest, res) =
       return res.status(403).json({ error: "You can only view students in your own courses" });
     }
 
-    // Get all enrollments for this course with student details
-    const enrollments = await prisma.enrollments.findMany({
-      where: { courseId },
-      include: {
-        student: {
-          select: {
-            id: true,
-            email: true
-          }
-        }
-      },
-      orderBy: {
-        createdAt: 'asc'
-      }
-    });
+    // Get enrollments via gRPC
+    const enrollmentData = await getCourseEnrollments(courseId)
 
     res.json({
       course: {
@@ -75,12 +76,8 @@ router.get("/:courseId/students", jwtMiddleware, async (req: AuthRequest, res) =
         code: course.code,
         title: course.title
       },
-      students: enrollments.map(e => ({
-        studentId: e.student.id,
-        email: e.student.email,
-        enrolledAt: e.createdAt
-      })),
-      totalEnrolled: enrollments.length
+      students: enrollmentData.students,
+      totalEnrolled: enrollmentData.totalEnrolled
     });
 
   } catch (err) {
@@ -94,21 +91,38 @@ router.get("/", jwtMiddleware, async (req, res) => {
   try {
     const courses = await prisma.courses.findMany({
       include: {
-        faculty: { select: { email: true } },
-        enrollments: true
+        faculty: { select: { email: true } }
       }
     });
 
-    res.json(
-      courses.map(c => ({
-        id: c.id,
-        code: c.code,
-        title: c.title,
-        faculty: c.faculty.email,
-        capacity: c.capacity,
-        enrolledCount: c.enrollments.length
-      }))
-    );
+    // get enrollment counts via gRPC
+    const coursesWithCounts = await Promise.all(
+      courses.map(async (c) => {
+        try {
+          const enrolledCount = await getEnrollmentCount(c.id)
+          return {
+            id: c.id,
+            code: c.code,
+            title: c.title,
+            faculty: c.faculty.email,
+            capacity: c.capacity,
+            enrolledCount
+          }
+        } catch (err) {
+          console.error(`Failed to get count for course ${c.id}:`, err)
+          return {
+            id: c.id,
+            code: c.code,
+            title: c.title,
+            faculty: c.faculty.email,
+            capacity: c.capacity,
+            enrolledCount: 0
+          }
+        }
+      })
+    )
+
+    res.json(coursesWithCounts)
 
   } catch (err) {
     console.error(err);

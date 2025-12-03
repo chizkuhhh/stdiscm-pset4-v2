@@ -28,6 +28,7 @@ model Courses {
   id        Int       @id @default(autoincrement())
   code      String
   title     String
+  section   String    @default("A")
   facultyId Int
   faculty   Users     @relation("FacultyCourses", fields: [facultyId], references: [id])
 
@@ -35,6 +36,8 @@ model Courses {
 
   enrollments Enrollments[]
   grades      Grades[]
+
+  @@unique([code, section])
 }
 
 model Enrollments {
