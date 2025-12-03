@@ -16,6 +16,10 @@ A fault-tolerant distributed enrollment system with database redundancy and indi
 - **PostgreSQL Replica (Port 5435)**: Handles READ operations (Docker container)
 - **Replication**: PostgreSQL logical replication from primary to replica
 
+###gRPC Communication Layer
+- **Enrollment gRPC Server (Port 50051)**: Provides the enrollment data services
+- **Courses gRPC Client**: Consumes enrollment data via gRPC for checking course capacity in real-time
+
 ## Database Redundancy Implementation
 
 ### Service-Level Routing
@@ -247,9 +251,11 @@ Open your browser and navigate to: **http://localhost:5173**
 - **David**: `student.david@school.com` / `password123`
 - **Emma**: `student.emma@school.com` / `password123`
 
-### Seeded Courses
-- **CS101** - Introduction to CS (4/5 enrolled)
-- **MATH201** - Advanced Calculus (2/5 enrolled)
-- **PHY150** - Physics I (4/5 enrolled)
-- **ENG100** - English Composition (3/3 enrolled - FULL)
-- **HIST202** - World History (1/5 enrolled)
+### Seeded Courses & Sections
+- **CS101-A** - Introduction to CS (2/5 enrolled)
+- **CS101-B** - Introduction to CS (2/5 enrolled)
+- **MATH201-A** - Advanced Calculus (1/5 enrolled)
+- **MATH201-B** - Advanced Calculus (1/3 enrolled)
+- **PHY150-A** - Physics I (4/5 enrolled)
+- **ENG100-A** - English Composition (3/3 enrolled - FULL)
+- **HIST202-A** - World History (1/5 enrolled)
