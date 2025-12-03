@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom'
 import { authApi } from '../api/authApi'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faInbox, faChalkboardUser } from '@fortawesome/free-solid-svg-icons'
-import { faGoogle } from '@fortawesome/free-brands-svg-icons'
 
 function SignupStart() {
   const [email, setEmail] = useState('')
