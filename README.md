@@ -16,9 +16,23 @@ A fault-tolerant distributed enrollment system with database redundancy and indi
 - **PostgreSQL Replica (Port 5435)**: Handles READ operations (Docker container)
 - **Replication**: PostgreSQL logical replication from primary to replica
 
-###gRPC Communication Layer
-- **Enrollment gRPC Server (Port 50051)**: Provides the enrollment data services
-- **Courses gRPC Client**: Consumes enrollment data via gRPC for checking course capacity in real-time
+### gRPC Service-to-Service Communication
+- **Enrollment gRPC Server (Port 50051)**: Exposes enrollment data
+- **Courses gRPC Client**: Consumes enrollment data
+
+#### Service Definition
+**enrollment.proto:**
+```protobuf
+service EnrollmentService {
+  rpc GetEnrollmentCount (CourseIdRequest) returns (EnrollmentCountResponse);
+  rpc GetCourseEnrollments (CourseIdRequest) returns (CourseEnrollmentsResponse);
+}
+```
+**When Course Service needs enrollment data:**
+1. Course Service makes gRPC call to Enrollment Service (port 50051)
+2. Enrollment Service queries replica database
+3. Returns enrollment count/student list via gRPC
+4. Course Service includes this data in HTTP response to Frontend
 
 ## Database Redundancy Implementation
 
