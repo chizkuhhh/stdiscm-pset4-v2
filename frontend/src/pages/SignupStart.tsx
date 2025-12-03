@@ -145,31 +145,6 @@ function SignupStart() {
               Log in
             </a>
           </div>
-
-          {/* Divider */}
-          <div className="relative mb-6">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-lavender-gray-300"></div>
-            </div>
-            <div className="relative flex justify-center">
-              <span className="px-3 bg-white text-gray-500 text-sm">
-                or continue with
-              </span>
-            </div>
-          </div>
-
-          {/* Google Button */}
-          <button className="
-            w-full rounded-xl py-2.5 
-            border border-lavender-gray-300 
-            bg-white hover:bg-lavender-gray-50
-            flex items-center justify-center space-x-3
-            transition
-          ">
-            <FontAwesomeIcon icon={faGoogle} className="text-xl text-lavender-gray-800" />
-            <span className="text-gray-700 font-medium">Sign up with Google</span>
-          </button>
-
         </div>
       </div>
     </>
