@@ -3,6 +3,8 @@ import { useParams, Link } from "react-router-dom";
 import { courseApi } from "../api/courseApi";
 import { gradesApi } from "../api/gradesApi";
 import axios from "axios";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 
 interface Student {
   studentId: number;
@@ -14,6 +16,7 @@ interface CourseInfo {
   id: number;
   code: string;
   title: string;
+  section: string;
 }
 
 interface CourseStudentsResponse {
@@ -68,9 +71,10 @@ export default function CourseStudents() {
         </div>
         <Link
           to="/my-courses"
-          className="inline-block mt-4 text-blue-600 hover:underline"
+          className="inline-flex items-center mb-4 px-3 py-2 bg-white border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 text-sm font-medium shadow-sm"
         >
-          ← Back to My Courses
+          <FontAwesomeIcon icon={faArrowLeft} className="w-4 h-4 mr-2" />
+          Back to My Courses
         </Link>
       </div>
     );
@@ -86,23 +90,22 @@ export default function CourseStudents() {
 
   return (
     <div className="p-6">
-      {/* Header */}
       <div className="mb-6">
         <Link
           to="/my-courses"
-          className="text-blue-600 hover:underline mb-2 inline-block"
+          className="inline-flex items-center mb-4 px-3 py-2 bg-white border border-gray-300 text-lavender-gray-700 rounded-md hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 text-sm font-medium shadow-sm"
         >
-          ← Back to My Courses
+          <FontAwesomeIcon icon={faArrowLeft} className="w-4 h-4 mr-2" />
+          Back to My Courses
         </Link>
         <h1 className="text-2xl font-bold">
-          {data.course.code} — {data.course.title}
+          {data.course.code}-{data.course.section}: {data.course.title}
         </h1>
         <p className="text-gray-600 mt-1">
           Total Enrolled: {data.totalEnrolled} student{data.totalEnrolled !== 1 ? "s" : ""}
         </p>
       </div>
 
-      {/* Students List */}
       {data.students.length === 0 ? (
         <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 text-center">
           <p className="text-gray-600">No students enrolled yet.</p>
@@ -147,7 +150,6 @@ export default function CourseStudents() {
         </div>
       )}
 
-      {/* Grade Upload Modal */}
       {uploadingFor && data && (
         <GradeUploadModal
           student={uploadingFor}
@@ -159,9 +161,6 @@ export default function CourseStudents() {
   );
 }
 
-/* ----------------------------------------------------------
-   GRADE UPLOAD MODAL
----------------------------------------------------------- */
 interface GradeUploadModalProps {
   student: Student;
   course: CourseInfo;
@@ -207,17 +206,15 @@ function GradeUploadModal({ student, course, onClose }: GradeUploadModalProps) {
       <div className="bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-4">
         <h2 className="text-xl font-bold mb-4">Upload Grade</h2>
 
-        {/* Course and Student Info (Read-only) */}
         <div className="mb-4 p-3 bg-gray-50 rounded border">
           <p className="text-sm text-gray-600 mb-1">
-            <span className="font-medium">Course:</span> {course.code} — {course.title}
+            <span className="font-medium">Course:</span> {course.code}-{course.section}: {course.title}
           </p>
           <p className="text-sm text-gray-600">
             <span className="font-medium">Student:</span> {student.email}
           </p>
         </div>
 
-        {/* Grade Input */}
         <div className="space-y-3 mb-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -248,7 +245,6 @@ function GradeUploadModal({ student, course, onClose }: GradeUploadModalProps) {
           </div>
         </div>
 
-        {/* Actions */}
         <div className="flex gap-3">
           <button
             onClick={onClose}

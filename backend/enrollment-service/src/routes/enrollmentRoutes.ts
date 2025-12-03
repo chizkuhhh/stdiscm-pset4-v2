@@ -29,6 +29,7 @@ router.get("/mine", jwtMiddleware, async (req: AuthRequest, res) => {
         courseId: e.courseId,
         code: e.course.code,
         title: e.course.title,
+        section: e.course.section,
         faculty: e.course.faculty.email,
         enrolledAt: e.createdAt
       }))

@@ -6,6 +6,7 @@ interface GradeRecord {
   courseId: number;
   courseCode: string;
   courseTitle: string;
+  courseSection: string;
   faculty: string;
   grade: string;
   term: string;
@@ -110,7 +111,7 @@ export default function Grades() {
               <div className="flex justify-between items-start">
                 <div className="flex-1">
                   <h2 className="font-bold text-lg mb-1">
-                    {g.courseCode} — {g.courseTitle}
+                    {g.courseCode}-{g.courseSection}: {g.courseTitle}
                   </h2>
                   <p className="text-sm text-gray-600 mb-1">
                     <span className="font-medium">Faculty:</span> {g.faculty}

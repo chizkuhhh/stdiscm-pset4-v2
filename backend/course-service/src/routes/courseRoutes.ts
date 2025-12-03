@@ -20,6 +20,7 @@ router.get("/my-courses", jwtMiddleware, async (req: AuthRequest, res) => {
         id: true,
         code: true,
         title: true,
+        section: true,
         capacity: true
       },
     });
@@ -56,7 +57,12 @@ router.get("/:courseId/students", jwtMiddleware, async (req: AuthRequest, res) =
     // Verify the course belongs to this faculty member
     const course = await prisma.courses.findUnique({
       where: { id: courseId },
-      select: { facultyId: true, code: true, title: true }
+      select: { 
+        facultyId: true, 
+        code: true, 
+        title: true,
+        section: true 
+      }
     });
 
     if (!course) {
@@ -74,7 +80,8 @@ router.get("/:courseId/students", jwtMiddleware, async (req: AuthRequest, res) =
       course: {
         id: courseId,
         code: course.code,
-        title: course.title
+        title: course.title,
+        section: course.section
       },
       students: enrollmentData.students,
       totalEnrolled: enrollmentData.totalEnrolled
@@ -104,6 +111,7 @@ router.get("/", jwtMiddleware, async (req, res) => {
             id: c.id,
             code: c.code,
             title: c.title,
+            section: c.section,
             faculty: c.faculty.email,
             capacity: c.capacity,
             enrolledCount
@@ -114,6 +122,7 @@ router.get("/", jwtMiddleware, async (req, res) => {
             id: c.id,
             code: c.code,
             title: c.title,
+            section: c.section,
             faculty: c.faculty.email,
             capacity: c.capacity,
             enrolledCount: 0

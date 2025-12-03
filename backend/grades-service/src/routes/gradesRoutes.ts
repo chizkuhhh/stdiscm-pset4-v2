@@ -24,7 +24,7 @@ router.get("/", jwtMiddleware, async (req: AuthRequest, res) => {
     include: {
       course: {
         include: {
-          faculty: true, // fetch faculty user
+          faculty: true,
         },
       },
     },
@@ -35,6 +35,7 @@ router.get("/", jwtMiddleware, async (req: AuthRequest, res) => {
     courseId: g.courseId,
     courseCode: g.course.code,
     courseTitle: g.course.title,
+    courseSection: g.course.section,
     faculty: g.course.faculty.email,
     grade: g.grade,
     term: g.term

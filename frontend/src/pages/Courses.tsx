@@ -107,19 +107,16 @@ export default function Courses() {
                 className="p-5 bg-white shadow-sm rounded-lg border hover:shadow-md transition-shadow"
               >
                 {/* Header with badges */}
-                <div className="flex justify-between items-start mb-2">
-                  <h2 className="font-bold text-lg">{c.code}</h2>
-                  <span className="text-xs bg-lavender-gray-200 text-lavender-gray-800 px-2 py-1 rounded font-medium">
-                    Section {c.section}
-                  </span>
+                <div className="flex-col justify-between items-start mb-2">
+                  <h2 className="font-bold text-lg">{c.code}-{c.section}</h2>
                   <div className="flex gap-1">
                     {role === "student" && alreadyEnrolled && (
-                      <span className="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded">
+                      <span className="px-2 py-1 bg-green-100 border text-green-800 text-xs font-medium rounded">
                         ENROLLED
                       </span>
                     )}
                     {c.capacity && (
-                      <span className={`px-2 py-1 text-xs font-medium rounded ${
+                      <span className={`px-2 py-1 text-xs font-medium rounded border ${
                         isFull 
                           ? 'bg-red-100 text-red-800' 
                           : 'bg-green-100 text-green-800'
