@@ -30,9 +30,10 @@ router.get("/", jwtMiddleware, async (req: AuthRequest, res) => {
     },
   });
 
-  // Shape the data for the frontend
   const output = grades.map((g) => ({
+    id: g.id,
     courseId: g.courseId,
+    createdAt: g.createdAt,
     courseCode: g.course.code,
     courseTitle: g.course.title,
     courseSection: g.course.section,

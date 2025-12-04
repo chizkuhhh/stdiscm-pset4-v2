@@ -5,6 +5,8 @@ import { gradesApi } from '../api/gradesApi';
 import { courseApi } from '../api/courseApi';
 
 interface Grade {
+  id: number;
+  createdAt: string;
   courseCode: string;
   courseTitle: string;
   courseSection: string;
@@ -47,7 +49,11 @@ export default function StudentDashboard() {
         setRecentEnrollments(enrollmentsRes.data.slice(0, 3));
 
         if (gradesRes.data.length > 0) {
-          setLatestGrade(gradesRes.data[0]);
+          const sortedGrades = gradesRes.data.sort((a, b) => 
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          );
+
+          setLatestGrade(sortedGrades[0]);
         }
       } catch (err) {
         console.error("Failed to load dashboard data:", err);
